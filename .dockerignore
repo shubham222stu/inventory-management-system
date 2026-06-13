@@ -1,0 +1,8 @@
+.git/
+node_modules/
+backend/.venv/
+backend/venv/
+frontend/dist/
+.env
+.idea/
+.vscode/
