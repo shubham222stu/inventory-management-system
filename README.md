@@ -131,3 +131,106 @@ Deploying to **Vercel** (free tier hosting):
    - Key: `VITE_API_URL`
    - Value: `https://stockflow-backend.onrender.com` (your live Render API URL)
 6. Click **Deploy**. Note down the public URL (e.g. `https://stockflow.vercel.app`).
+
+---
+
+## API Documentation
+
+### Products
+- **`POST /products`**: Create a new product.
+  - **Body**:
+    ```json
+    {
+      "name": "Wireless Keyboard",
+      "sku": "KB-WL-101",
+      "price": 49.99,
+      "quantity": 100
+    }
+    ```
+  - **Response**: `201 Created` with full product object.
+- **`GET /products`**: Retrieve all products.
+  - **Response**: `200 OK` with list of products.
+- **`GET /products/{id}`**: Retrieve specific product details by ID.
+  - **Response**: `200 OK` or `404 Not Found`.
+- **`PUT /products/{id}`**: Update product details.
+  - **Body** (fields are optional):
+    ```json
+    {
+      "name": "Wireless Mechanical Keyboard",
+      "price": 54.99
+    }
+    ```
+  - **Response**: `200 OK` with updated product.
+- **`DELETE /products/{id}`**: Delete a product.
+  - **Response**: `200 OK` or `400 Bad Request` (if product is linked to an order item).
+
+### Customers
+- **`POST /customers`**: Register a customer.
+  - **Body**:
+    ```json
+    {
+      "name": "Alice Smith",
+      "email": "alice@example.com",
+      "phone": "+123456789"
+    }
+    ```
+  - **Response**: `201 Created`.
+- **`GET /customers`**: List all customers.
+  - **Response**: `200 OK`.
+- **`GET /customers/{id}`**: Get customer details by ID.
+  - **Response**: `200 OK` or `404 Not Found`.
+- **`DELETE /customers/{id}`**: Delete customer.
+  - **Response**: `200 OK` or `400 Bad Request` (if customer has active orders).
+
+### Orders
+- **`POST /orders`**: Place a new order (triggers stock checks and deductions).
+  - **Body**:
+    ```json
+    {
+      "customer_id": 1,
+      "items": [
+        { "product_id": 2, "quantity": 3 }
+      ]
+    }
+    ```
+  - **Response**: `201 Created` with computed totals.
+- **`GET /orders`**: Retrieve all orders with nested items.
+  - **Response**: `200 OK`.
+- **`GET /orders/{id}`**: Retrieve specific order details by ID.
+  - **Response**: `200 OK` or `404 Not Found`.
+- **`DELETE /orders/{id}`**: Cancel/delete an order (restores stock).
+  - **Response**: `200 OK`.
+
+### Dashboard Analytics
+- **`GET /dashboard/summary`**: Retrieve summary metrics.
+  - **Response**: `200 OK` with total products, total customers, total orders, and low stock list.
+
+---
+
+## Local Setup without Docker (SQLite Fallback)
+
+If Docker is not installed or running on your local development machine, you can run the system directly:
+
+### 1. Backend Setup
+1. Enter the backend directory and install pure Python requirements:
+   ```bash
+   cd backend
+   python -m pip install fastapi uvicorn sqlalchemy pydantic[email] python-dotenv
+   ```
+2. Start the FastAPI development server:
+   ```bash
+   python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+   ```
+
+### 2. Frontend Setup
+1. Enter the frontend directory and install Node packages:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Start the Vite React development server:
+   ```bash
+   npm run dev
+   ```
+3. Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
